@@ -1,0 +1,13 @@
+services:
+  easybot.slim:
+    build: 
+      context: ..
+      dockerfile: slim/Dockerfile
+    container_name: easybot
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+      - "26990:26990"
+    volumes:
+      - ~/easybot/data:/app/appdata
+      - ~/easybot/logs:/app/logs   
