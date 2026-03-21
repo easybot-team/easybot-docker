@@ -23,6 +23,7 @@ EXPOSE 26990
 
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV Kestrel__Endpoints__web_api__Url=http://+:5000
+ENV ServerOptions__Host=0.0.0.0
 
 #
 # 生成Token和配置文件
