@@ -5,13 +5,11 @@ on:
     branches: [main]
 
 jobs:
-
   # -----------------------------
   # DEV
   # -----------------------------
   dev-build-and-push:
-    if: contains(join(github.event.commits.*.modified, ','), 'boot/dev') || 
-        contains(join(github.event.commits.*.added, ','), 'boot/dev')
+    if: contains(github.event.head_commit.message, 'update(dev)')
     runs-on: ubuntu-latest
 
     steps:
@@ -19,8 +17,8 @@ jobs:
 
       - uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Slim (dev)
         uses: docker/build-push-action@v5
@@ -46,13 +44,11 @@ jobs:
             BOOT_DIR=dev
           tags: miuxue/easybot:dev-full
 
-
   # -----------------------------
   # STABLE
   # -----------------------------
   stable-build-and-push:
-    if: contains(join(github.event.commits.*.modified, ','), 'boot/stable') || 
-        contains(join(github.event.commits.*.added, ','), 'boot/stable')
+    if: contains(github.event.head_commit.message, 'update(stable)')
     runs-on: ubuntu-latest
 
     steps:
@@ -60,8 +56,8 @@ jobs:
 
       - uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Slim (stable)
         uses: docker/build-push-action@v5
