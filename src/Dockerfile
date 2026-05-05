@@ -1,6 +1,43 @@
-FROM miuxue/easybot:dev-slim
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.24-jammy-amd64 AS base
+
+#
+# > BOOT（程序）
+#
+ARG BOOT_DIR=stable
+COPY ../boot/${BOOT_DIR} /app
+RUN chmod +x /app/*
+
+#
+# > BASE（通用配置）
+#
+ENV EASYBOT_ENABLE_DOCKER_MODE=true
 WORKDIR /app
-USER root
+
+RUN mkdir /app/logs && chmod 777 /app/logs
+
+EXPOSE 5000
+EXPOSE 26990
+
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV Kestrel__Endpoints__web_api__Url=http://+:5000
+ENV ServerOptions__Host=0.0.0.0
+
+RUN mkdir -p /app/appdata \
+    && chmod 777 /app/appdata \
+    && echo "{}" >> /app/appdata/appsettings.json \
+    && chmod 666 /app/appdata/appsettings.json
+
+ENTRYPOINT [ "/app/EasyBot" ]
+
+#
+# > slim（无浏览器）
+#
+FROM base AS slim
+
+#
+# > full（有浏览器）
+#
+FROM base AS full
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -47,7 +84,5 @@ RUN apt-get update \
 
 RUN mkdir -p /app/PuppeteerSharp/ChromeHeadlessShell/Linux-142.0.7444.59 && \
     wget -O /tmp/chrome-headless-shell-linux64.zip https://registry.npmmirror.com/-/binary/chrome-for-testing/142.0.7444.59/linux64/chrome-headless-shell-linux64.zip && \
-    unzip /tmp/chrome-headless-shell-linux64.zip -d /app/PuppeteerSharp/ChromeHeadlessShell/Linux-142.0.7444.59/ && \
-    rm /tmp/chrome-headless-shell-linux64.zip
-
-ENTRYPOINT [ "/app/EasyBot" ]
+    unzip /tmp/chrome-headless-shell-linux64.zip -d /app/PuppeteerSharp/ChromeHeadlessShell/Linux-142.0.7444.59/ \
+    && rm /tmp/chrome-headless-shell-linux64.zip
