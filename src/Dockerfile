@@ -78,14 +78,16 @@ RUN apt-get update \
 
 # 补全字体
 
-RUN apt-get install -y \
+RUN apt-get update \
+    && apt-get install -y \
     fonts-noto-cjk \
     fonts-noto-cjk-extra \
     fonts-wqy-zenhei \
     fonts-wqy-microhei \
     fonts-arphic-ukai \
     fonts-arphic-uming \
-    fonts-noto-color-emoji
+    fonts-noto-color-emoji \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN fc-cache -fv
 
