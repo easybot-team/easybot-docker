@@ -76,6 +76,19 @@ RUN apt-get update \
     fonts-wqy-zenhei \
     && rm -rf /var/lib/apt/lists/*
 
+# 补全字体
+
+RUN apt-get install -y \
+    fonts-noto-cjk \
+    fonts-noto-cjk-extra \
+    fonts-wqy-zenhei \
+    fonts-wqy-microhei \
+    fonts-arphic-ukai \
+    fonts-arphic-uming \
+    fonts-noto-color-emoji
+
+RUN fc-cache -fv
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     wget \
